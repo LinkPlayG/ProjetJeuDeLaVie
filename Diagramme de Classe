@@ -1,1 +1,51 @@
+---
+Titre : Dagramme de classe, Jeu de la vie
+---
+classDiagram
+    class Jeu{
+        -std::string fileName
+        -abstractGrille grille
+        -int mode
+        -Save()
+        -Load()
+        +Launch()
+    }
 
+    class AbstractGrille{
+        abstract #int sizeX
+        abstract #int sizeY
+        abstract #std::vector<abstractCellule>grille
+        abstract +SetGrilleSize(x,y)
+    }
+    class GrilleClassique{
+    }
+    class GrilleTorique{
+    }
+    class Motif{
+    }
+
+    class AbstractCellule{
+        abstract #int x
+        abstract #int y
+        abstract #int state
+        abstract +int GetState 
+    }
+
+    class CelluleClassique{
+        +ChangeState()
+    }
+
+    class Obstacle{
+        +GetState() override
+    }
+
+    Jeu-->AbstractGrille : utilise
+    
+    AbstractGrille<|--GrilleClassique
+    AbstractGrille<|--GrilleTorique
+    AbstractGrille<|--Motif
+
+    AbstractGrille*--AbstractCellule : est composée de
+
+    AbstractCellule <|--CelluleClassique
+    AbstractCellule <|-- Obstacle
