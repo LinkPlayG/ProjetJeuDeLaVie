@@ -7,4 +7,4 @@ file(GLOB HEADERS_FILES hea/*.h)
 
 file(GLOB SOURCE_FILES src/*.cpp)
 
-add_executable(ProjetJeuDeLaVie ${SOURCE_FILES} ${HEADERS_FILES})
+add_executable(ProjetJeuDeLaVie ${SOURCE_FILES} ${HEADERS_FILES} main.cpp)

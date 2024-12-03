@@ -1,7 +1,7 @@
 //
 // Created by lucas on 03/12/2024.
 //
-#include "../hea\StandardCellule.h"
+#include "../hea/StandardCellule.h"
 
 StandardCellule::StandardCellule():AbstractCellule(){}
 StandardCellule::StandardCellule(int x, int y, int state):AbstractCellule(x,y,state){}
