@@ -3,7 +3,7 @@ project(ProjetJeuDeLaVie)
 
 set(CMAKE_CXX_STANDARD 20)
 
-file(GLOB HEADERS_FILES lib/*.h)
+file(GLOB HEADERS_FILES hea/*.h)
 
 file(GLOB SOURCE_FILES src/*.cpp)
 
