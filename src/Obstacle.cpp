@@ -6,8 +6,8 @@
 Obstacle::Obstacle():AbstractCellule(){}
 Obstacle::Obstacle(int x, int y, int state) :AbstractCellule(x, y, state){}
 
-int Obstacle::getX()const{}
-int Obstacle::getY()const{}
-int Obstacle::GetState(){}
+int Obstacle::getX()const {return x;}
+int Obstacle::getY()const{return y;}
+int Obstacle::GetState(){return state;}
 
 
