@@ -23,7 +23,7 @@ public:
     GrilleClassique(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules);
     void afficherGrille() const override;
     int VoisinVivant(int x, int y) const;
-    //void update() override;
+    void update() override;
 };
 
 class GrilleTorique : public AbstractGrille {
@@ -31,7 +31,7 @@ public:
     GrilleTorique(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules);
     void afficherGrille() const override;
     int VoisinVivant(int x, int y) const;
-    //void update() override;
+    void update() override;
 };
 
 class Motif : public AbstractGrille {
@@ -39,6 +39,7 @@ public:
     Motif(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules);
     void afficherGrille() const override;
     int VoisinVivant(int x, int y) const;
+    void update() override;
 };
 
 #endif //GRILLE_H

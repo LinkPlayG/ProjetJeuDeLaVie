@@ -36,6 +36,30 @@ int GrilleClassique::VoisinVivant(int x, int y) const {
     return voisinsVivants;
 }
 
+//update des cellules de la grille classique
+void GrilleClassique::update() {
+    std::vector<std::vector<CelluleClassique>> newCellules = Cellules;
+
+    for (int x = 0; x < sizeX; ++x) {
+        for (int y = 0; y < sizeY; ++y) {
+            int voisinsVivants = VoisinVivant(x, y);
+            if (Cellules[x][y].getEtat()) {
+                // Cellule vivante : meurt si <2 ou >3 voisins vivants
+                if (voisinsVivants < 2 || voisinsVivants > 3) {
+                    newCellules[x][y].setEtat(false);
+                }
+            } else {
+                // Cellule morte : devient vivante si exactement 3 voisins vivants
+                if (voisinsVivants == 3) {
+                    newCellules[x][y].setEtat(true);
+                }
+            }
+        }
+    }
+    // Mettre à jour la grille
+    Cellules = newCellules;
+}
+
 // Constructeur de GrilleTorique
 GrilleTorique::GrilleTorique(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
@@ -65,6 +89,29 @@ int GrilleTorique::VoisinVivant(int x, int y) const {
         }
     }
     return voisinsVivants;
+}
+
+void GrilleTorique::update() {
+    std::vector<std::vector<CelluleClassique>> newCellules = Cellules;
+
+    for (int x = 0; x < sizeX; ++x) {
+        for (int y = 0; y < sizeY; ++y) {
+            int voisinsVivants = VoisinVivant(x, y);
+            if (Cellules[x][y].getEtat()) {
+                // Cellule vivante : meurt si <2 ou >3 voisins vivants
+                if (voisinsVivants < 2 || voisinsVivants > 3) {
+                    newCellules[x][y].setEtat(false);
+                }
+            } else {
+                // Cellule morte : devient vivante si exactement 3 voisins vivants
+                if (voisinsVivants == 3) {
+                    newCellules[x][y].setEtat(true);
+                }
+            }
+        }
+    }
+    // Mettre à jour la grille
+    Cellules = newCellules;
 }
 
 // Constructeur de Motif
