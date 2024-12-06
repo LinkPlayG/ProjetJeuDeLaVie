@@ -11,16 +11,20 @@ void AbstractGrille::setCellState(int x, int y, int state) {
 }
 
 // ----- Constructeurs -----
+AbstractGrille::AbstractGrille(): sizeX(2), sizeY(2), Cellules({0,0,0,0}) {}
 
 AbstractGrille::AbstractGrille(int X, int Y, const std::vector<int>& newCellules)
     : sizeX(X), sizeY(Y), Cellules(newCellules) {}
 
+GrilleClassique::GrilleClassique() : AbstractGrille() {}
 GrilleClassique::GrilleClassique(int X, int Y, const std::vector<int>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 
+GrilleTorique::GrilleTorique() : AbstractGrille() {}
 GrilleTorique::GrilleTorique(int X, int Y, const std::vector<int>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 
+Motif::Motif() : AbstractGrille() {}
 Motif::Motif(int X, int Y, const std::vector<int>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 

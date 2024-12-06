@@ -13,6 +13,7 @@ protected:
 
 public:
 
+    AbstractGrille();
     AbstractGrille(int X, int Y, const std::vector<int>& newCellules);
     virtual void afficherGrille() const = 0;  // Méthode d'affichage virtuelle pure
     virtual ~AbstractGrille() = default;      // Destructeur virtuel
@@ -25,6 +26,7 @@ public:
 // Classe pour une grille classique
 class GrilleClassique : public AbstractGrille {
 public:
+    GrilleClassique();
     GrilleClassique(int X, int Y, const std::vector<int>& newCellules);
     void afficherGrille() const override; // Affiche la grille
     int VoisinVivant(int x, int y) const; // Compte les voisins vivants
@@ -34,6 +36,7 @@ public:
 // Classe pour une grille torique
 class GrilleTorique : public AbstractGrille {
 public:
+    GrilleTorique();
     GrilleTorique(int X, int Y, const std::vector<int>& newCellules);
     void afficherGrille() const override;
     int VoisinVivant(int x, int y) const;
@@ -43,6 +46,7 @@ public:
 // Classe pour un motif (grille statique ou préconfigurée)
 class Motif : public AbstractGrille {
 public:
+    Motif();
     Motif(int X, int Y, const std::vector<int>& newCellules);
     void afficherGrille() const override;
     int VoisinVivant(int x, int y) const;
