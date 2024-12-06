@@ -21,8 +21,8 @@ list(FILTER SOURCES EXCLUDE REGEX ".*\\.ccls-cache.*")
 list(FILTER HEADERS EXCLUDE REGEX ".*\\.ccls-cache.*")
 
 # Main executable target
-add_executable(GOL ${SOURCES} ${HEADERS} ../main.cpp)
-target_link_libraries(GOL PRIVATE ${SFML_LIBS})
+add_executable(main ${SOURCES} ${HEADERS} ../main.cpp)
+target_link_libraries(main PRIVATE ${SFML_LIBS})
 
 add_executable(test ${SOURCES} ${HEADERS} ../tests/test.cpp)
 target_link_libraries(test PRIVATE ${SFML_LIBS})
