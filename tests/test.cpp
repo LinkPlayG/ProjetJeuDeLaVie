@@ -122,7 +122,7 @@ int main() {
     testAfficherGrille();
     testVoisinVivant();
 
-    //testUpdate();
+    //testUpdates();
 
     std::cout << "Tous les tests sont terminés !" << std::endl;
     return 0;
