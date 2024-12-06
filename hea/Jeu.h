@@ -19,7 +19,7 @@
 
 class Jeu{
     private:
-        const int cellSize = 10;
+        const int cellSize = 20;
         int gridWidth = 5;
         int gridHeight = 5;
         const int iterations = 100;

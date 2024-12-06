@@ -40,7 +40,6 @@ void Jeu::Load(std::string fileName){
     }
 
     fichier >> gridHeight >> gridWidth; // Lecture des dimensions de la grille
-    std::cout<<gridHeight<<" "<<gridWidth<<std::endl;
     std::vector<int> Cellules;
 
     for (int i = 0; i < gridHeight; ++i) {
@@ -87,20 +86,14 @@ void Jeu::Launch(){
 void Jeu::IG(){
   	sf::RenderWindow window(sf::VideoMode(gridWidth * cellSize, gridHeight * cellSize), "Game of Life");
 
-    std::vector<int> cellules;
-    GrilleClassique grille(gridWidth,gridHeight,cellules);
-
     sf::Event event;
 
     for (int t=0; t < iterations; t++) {
-        if (event.type == sf::Event::Closed) {
-            window.close();
-        }
         window.clear();
         sf::RectangleShape cell(sf::Vector2f(cellSize - 1.0f, cellSize - 1.0f));
         for (int x = 0; x < gridWidth; ++x) {
             for (int y = 0; y < gridHeight; ++y) {
-                if (grille.getCellState(x,y) == 1) {
+                if (this->grille->getCellState(x,y) == 1) {
                     cell.setPosition(x * cellSize, y * cellSize);
                     window.draw(cell);
                 }
@@ -108,9 +101,9 @@ void Jeu::IG(){
         }
         window.display();
 
-        sf::sleep(sf::milliseconds(100));
+        sf::sleep(sf::milliseconds(1000));
 
-        grille.update();
+        grille->update();
     Save(fname);
 
 	}
@@ -119,6 +112,6 @@ void Jeu::Console(){
     for (int t=0; t < iterations; t++) {
       grille->afficherGrille();
       grille->update();
-      sf::sleep(sf::milliseconds(100));
+      sf::sleep(sf::milliseconds(1000));
     }
 }
