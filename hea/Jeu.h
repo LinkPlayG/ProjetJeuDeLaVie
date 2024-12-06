@@ -12,15 +12,23 @@
 #include "AbstractCellule.h"
 #include "Grille.h"
 
+
+#include <cstdlib>
+#include <ctime>
+#include <SFML/Graphics.hpp>
+
 class Jeu{
     private:
         const int cellSize = 10;
         int gridWidth = 5;
         int gridHeight = 5;
         const int iterations = 100;
+        std::string fname;
         GrilleClassique* grille;
-        void Save();
-        void Load();
+        void Save(std::string fileName);
+        void Load(std::string fileName);
+        void IG();
+        void Console();
     public:
         Jeu();
         void Launch();

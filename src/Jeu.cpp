@@ -9,9 +9,11 @@ Jeu::Jeu(){
   this->grille = new GrilleClassique();
 };
 
-void Jeu::Save(){
-    std::ofstream file;
-    file.open("../output", std::ios::out);
+void Jeu::Save(std::string fileName){
+   	std::ofstream file;
+    std::string temp;
+    temp="../"+fileName+"_out";
+    file.open(temp, std::ios::out);
     if (!file.is_open()) {
       std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
       return;
@@ -26,10 +28,12 @@ void Jeu::Save(){
     file.close();
 }
 
-void Jeu::Load(){
+void Jeu::Load(std::string fileName){
   //std::vector <StandardCellule> v;
   //void Jeu::Load() {
-    std::ifstream fichier("../input"); // Chemin du fichier à charger
+ 	std::string temp;
+    temp="../"+fileName;
+    std::ifstream fichier(temp); // Chemin du fichier à charger
     if (!fichier.is_open()) {
       std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
       return;
@@ -43,7 +47,6 @@ void Jeu::Load(){
       for (int j = 0; j < gridWidth; ++j) {
         bool etat;
         fichier >> etat; // Lire l'état de chaque cellule (0 ou 1)
-        std::cout<<etat<<std::endl;
         Cellules.push_back(etat);
       }
     }
@@ -55,9 +58,66 @@ void Jeu::Load(){
 
 }
 void Jeu::Launch(){
-	Load();
-    grille->afficherGrille();
-    Save();
+    //std::cout<<"Voulez vous utiliser un Motif (fonction non fonctionnelle pour l'instant)\n* Entrez 0 pour utiliser un fichier";
+    std::string answer;
+
+	std::cout<<"Entrez le nom du fichier d'entrée\n";
+
+    std::cin>>fname;
+    Load(fname);
+
+    std::cout<<"Entrez le nombre d'itérations que voous voulez\n";
+    std::cin>>answer;
+    stoi(answer)>>this->iterations;
+
+    std::cout<<"Voulez vous utiliser \n1)La console\n2)L'interface Graphique";
+    std::cin>>answer;
+    if(stoi(answer)==1){
+      	Console();
+    }
+    else if(stoi(answer)==2){
+        IG();
+    }
+    else{
+        std::cout<<"Veuillez Réésayer\n";
+    }
+
 }
 
+void Jeu::IG(){
+  	sf::RenderWindow window(sf::VideoMode(gridWidth * cellSize, gridHeight * cellSize), "Game of Life");
 
+    std::vector<int> cellules;
+    GrilleClassique grille(gridWidth,gridHeight,cellules);
+
+    sf::Event event;
+
+    for (int t=0; t < iterations; t++) {
+        if (event.type == sf::Event::Closed) {
+            window.close();
+        }
+        window.clear();
+        sf::RectangleShape cell(sf::Vector2f(cellSize - 1.0f, cellSize - 1.0f));
+        for (int x = 0; x < gridWidth; ++x) {
+            for (int y = 0; y < gridHeight; ++y) {
+                if (grille.getCellState(x,y) == 1) {
+                    cell.setPosition(x * cellSize, y * cellSize);
+                    window.draw(cell);
+                }
+            }
+        }
+        window.display();
+
+        sf::sleep(sf::milliseconds(100));
+
+        grille.update();
+    Save(fname);
+
+	}
+}
+void Jeu::Console(){
+    for (int t=0; t < iterations; t++) {
+      grille->afficherGrille();
+      grille->update();
+    }
+}
