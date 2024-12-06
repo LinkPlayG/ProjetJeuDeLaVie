@@ -1,135 +1,125 @@
-#include "../hea/Grille.h"
+#include "Grille.h"
 
-// Constructeur de AbstractGrille
-AbstractGrille::AbstractGrille(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
+// ----- Méthodes utilitaires -----
+
+int AbstractGrille::getCellState(int x, int y) const {
+    return Cellules[y * sizeX + x]; // Convertit les coordonnées 2D en index 1D
+}
+
+void AbstractGrille::setCellState(int x, int y, int state) {
+    Cellules[y * sizeX + x] = state; // Convertit les coordonnées 2D en index 1D
+}
+
+// ----- Constructeurs -----
+
+AbstractGrille::AbstractGrille(int X, int Y, const std::vector<int>& newCellules)
     : sizeX(X), sizeY(Y), Cellules(newCellules) {}
 
-// Constructeur de GrilleClassique
-GrilleClassique::GrilleClassique(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
+GrilleClassique::GrilleClassique(int X, int Y, const std::vector<int>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 
-// Affichage de GrilleClassique
+GrilleTorique::GrilleTorique(int X, int Y, const std::vector<int>& newCellules)
+    : AbstractGrille(X, Y, newCellules) {}
+
+Motif::Motif(int X, int Y, const std::vector<int>& newCellules)
+    : AbstractGrille(X, Y, newCellules) {}
+
+// ----- Méthodes communes -----
+
 void GrilleClassique::afficherGrille() const {
-    //std::cout << "Grille Classique de taille " << sizeX << " x " << sizeY << std::endl;
-    for (const auto& ligne : Cellules) {
-        for (const auto& cellule : ligne) {
-            std::cout << (cellule.getEtat() ? "O " : ". ");
+    for (int y = 0; y < sizeY; ++y) {
+        for (int x = 0; x < sizeX; ++x) {
+            std::cout << (getCellState(x, y) ? "O " : ". ");
         }
         std::cout << std::endl;
     }
 }
 
-// Calcul des voisins vivants pour GrilleClassique
 int GrilleClassique::VoisinVivant(int x, int y) const {
     int voisinsVivants = 0;
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
-            if (i == 0 && j == 0) continue;
+            if (i == 0 && j == 0) continue; // Ignore la cellule centrale
             int nx = x + i, ny = y + j;
-            if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY) {
-                if (Cellules[nx][ny].getEtat()) {
-                    ++voisinsVivants;
-                }
+            if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY) { // Vérifie les limites
+                voisinsVivants += getCellState(nx, ny);
             }
         }
     }
     return voisinsVivants;
 }
 
-//update des cellules de la grille classique
 void GrilleClassique::update() {
-    std::vector<std::vector<CelluleClassique>> newCellules = Cellules;
+    std::vector<int> newCellules = Cellules;
 
     for (int x = 0; x < sizeX; ++x) {
         for (int y = 0; y < sizeY; ++y) {
             int voisinsVivants = VoisinVivant(x, y);
-            if (Cellules[x][y].getEtat()) {
-                // Cellule vivante : meurt si <2 ou >3 voisins vivants
+            if (getCellState(x, y)) {
                 if (voisinsVivants < 2 || voisinsVivants > 3) {
-                    newCellules[x][y].setEtat(false);
+                    newCellules[y * sizeX + x] = 0; // Meurt
                 }
             } else {
-                // Cellule morte : devient vivante si exactement 3 voisins vivants
                 if (voisinsVivants == 3) {
-                    newCellules[x][y].setEtat(true);
+                    newCellules[y * sizeX + x] = 1; // Devient vivante
                 }
             }
         }
     }
-    // Mettre à jour la grille
-    Cellules = newCellules;
+    Cellules = newCellules; // Mise à jour de l'état de la grille
 }
 
-// Constructeur de GrilleTorique
-GrilleTorique::GrilleTorique(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
-    : AbstractGrille(X, Y, newCellules) {}
-
-// Affichage de GrilleTorique
 void GrilleTorique::afficherGrille() const {
-    //std::cout << "Grille Torique de taille " << sizeX << " x " << sizeY << std::endl;
-    for (const auto& ligne : Cellules) {
-        for (const auto& cellule : ligne) {
-            std::cout << (cellule.getEtat() ? "O " : ". ");
+    for (int y = 0; y < sizeY; ++y) {
+        for (int x = 0; x < sizeX; ++x) {
+            std::cout << (getCellState(x, y) ? "O " : ". ");
         }
         std::cout << std::endl;
     }
 }
 
-// Calcul des voisins vivants pour GrilleTorique
 int GrilleTorique::VoisinVivant(int x, int y) const {
     int voisinsVivants = 0;
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
             if (i == 0 && j == 0) continue;
-            int nx = (x + i + sizeX) % sizeX;
-            int ny = (y + j + sizeY) % sizeY;
-            if (Cellules[nx][ny].getEtat()) {
-                ++voisinsVivants;
-            }
+            int nx = (x + i + sizeX) % sizeX; // Gestion torique
+            int ny = (y + j + sizeY) % sizeY; // Gestion torique
+            voisinsVivants += getCellState(nx, ny);
         }
     }
     return voisinsVivants;
 }
 
 void GrilleTorique::update() {
-    std::vector<std::vector<CelluleClassique>> newCellules = Cellules;
+    std::vector<int> newCellules = Cellules;
 
     for (int x = 0; x < sizeX; ++x) {
         for (int y = 0; y < sizeY; ++y) {
             int voisinsVivants = VoisinVivant(x, y);
-            if (Cellules[x][y].getEtat()) {
-                // Cellule vivante : meurt si <2 ou >3 voisins vivants
+            if (getCellState(x, y)) {
                 if (voisinsVivants < 2 || voisinsVivants > 3) {
-                    newCellules[x][y].setEtat(false);
+                    newCellules[y * sizeX + x] = 0;
                 }
             } else {
-                // Cellule morte : devient vivante si exactement 3 voisins vivants
                 if (voisinsVivants == 3) {
-                    newCellules[x][y].setEtat(true);
+                    newCellules[y * sizeX + x] = 1;
                 }
             }
         }
     }
-    // Mettre à jour la grille
     Cellules = newCellules;
 }
 
-// Constructeur de Motif
-Motif::Motif(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
-    : AbstractGrille(X, Y, newCellules) {}
-
-// Affichage de Motif
 void Motif::afficherGrille() const {
-    //std::cout << "Motif de taille " << sizeX << " x " << sizeY << std::endl;
-    for (const auto& ligne : Cellules) {
-        for (const auto& cellule : ligne) {
-            std::cout << (cellule.getEtat() ? "O " : ". ");
+    for (int y = 0; y < sizeY; ++y) {
+        for (int x = 0; x < sizeX; ++x) {
+            std::cout << (getCellState(x, y) ? "O " : ". ");
         }
         std::cout << std::endl;
     }
 }
 
-// Calcul des voisins vivants pour Motif
 int Motif::VoisinVivant(int x, int y) const {
     int voisinsVivants = 0;
     for (int i = -1; i <= 1; ++i) {
@@ -137,11 +127,13 @@ int Motif::VoisinVivant(int x, int y) const {
             if (i == 0 && j == 0) continue;
             int nx = x + i, ny = y + j;
             if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY) {
-                if (Cellules[nx][ny].getEtat()) {
-                    ++voisinsVivants;
-                }
+                voisinsVivants += getCellState(nx, ny);
             }
         }
     }
     return voisinsVivants;
+}
+
+void Motif::update() {
+    // Exemple simple : ne fait rien (motif statique)
 }
