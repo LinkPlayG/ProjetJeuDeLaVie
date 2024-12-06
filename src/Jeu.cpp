@@ -66,11 +66,11 @@ void Jeu::Launch(){
     std::cin>>fname;
     Load(fname);
 
-    std::cout<<"Entrez le nombre d'itérations que voous voulez\n";
+    std::cout<<"Entrez le nombre d'itérations que vous voulez\n";
     std::cin>>answer;
     stoi(answer)>>this->iterations;
 
-    std::cout<<"Voulez vous utiliser \n1)La console\n2)L'interface Graphique";
+    std::cout<<"Voulez vous utiliser \n1)La console\n2)L'interface Graphique\n";
     std::cin>>answer;
     if(stoi(answer)==1){
       	Console();
@@ -119,5 +119,6 @@ void Jeu::Console(){
     for (int t=0; t < iterations; t++) {
       grille->afficherGrille();
       grille->update();
+      sf::sleep(sf::milliseconds(100));
     }
 }

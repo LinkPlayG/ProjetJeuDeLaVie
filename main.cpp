@@ -5,5 +5,5 @@
 
 int main() {
     Jeu jeu;
-    jeu.Launch;
+    jeu.Launch();
 }
