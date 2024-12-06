@@ -24,9 +24,15 @@ GrilleTorique::GrilleTorique(int X, int Y, const std::vector<int>& newCellules)
 Motif::Motif(int X, int Y, const std::vector<int>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 
-// ----- Méthodes communes -----
+// ----- ************** -----
 
 void GrilleClassique::afficherGrille() const {
+    // vérifier la taile de la grille
+    if (sizeof(Cellules) != sizeX * sizeY) {
+        std::cerr << "Erreur: la taille de la grille ne correspond pas à la taille spécifiée" << std::endl;
+        return;
+    }
+
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
             std::cout << (getCellState(x, y) ? " 0 " : " * ");
@@ -70,6 +76,11 @@ void GrilleClassique::update() {
 }
 
 void GrilleTorique::afficherGrille() const {
+    if (sizeof(Cellules) != sizeX * sizeY) {
+        std::cerr << "Erreur: la taille de la grille ne correspond pas à la taille spécifiée" << std::endl;
+        return;
+    }
+
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
             std::cout << (getCellState(x, y) ? " 0 " : " * ");
@@ -112,6 +123,11 @@ void GrilleTorique::update() {
 }
 
 void Motif::afficherGrille() const {
+    if (sizeof(Cellules) != sizeX * sizeY) {
+        std::cerr << "Erreur: la taille de la grille ne correspond pas à la taille spécifiée" << std::endl;
+        return;
+    }
+
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
             std::cout << (getCellState(x, y) ? " 0 " : " * ");
@@ -135,5 +151,5 @@ int Motif::VoisinVivant(int x, int y) const {
 }
 
 void Motif::update() {
-    // Exemple simple : ne fait rien (motif statique)
+    // ne fait rien (motif statique)
 }
