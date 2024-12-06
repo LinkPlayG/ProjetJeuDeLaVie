@@ -1,11 +1,11 @@
 #include "../hea/Grille.h"
 
 // Constructeur de AbstractGrille
-AbstractGrille::AbstractGrille(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
+AbstractGrille::AbstractGrille(int X, int Y, const std::vector<std::vector<StandardCellule>>& newCellules)
     : sizeX(X), sizeY(Y), Cellules(newCellules) {}
 
 // Constructeur de GrilleClassique
-GrilleClassique::GrilleClassique(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
+GrilleClassique::GrilleClassique(int X, int Y, const std::vector<std::vector<StandardCellule>>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 
 // Affichage de GrilleClassique
@@ -13,7 +13,7 @@ void GrilleClassique::afficherGrille() const {
     //std::cout << "Grille Classique de taille " << sizeX << " x " << sizeY << std::endl;
     for (const auto& ligne : Cellules) {
         for (const auto& cellule : ligne) {
-            std::cout << (cellule.getEtat() ? "O " : ". ");
+            std::cout << (cellule.GetState() ? "O " : ". ");
         }
         std::cout << std::endl;
     }
@@ -27,7 +27,7 @@ int GrilleClassique::VoisinVivant(int x, int y) const {
             if (i == 0 && j == 0) continue;
             int nx = x + i, ny = y + j;
             if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY) {
-                if (Cellules[nx][ny].getEtat()) {
+                if (Cellules[nx][ny].GetState()) {
                     ++voisinsVivants;
                 }
             }
@@ -38,20 +38,20 @@ int GrilleClassique::VoisinVivant(int x, int y) const {
 
 //update des cellules de la grille classique
 void GrilleClassique::update() {
-    std::vector<std::vector<CelluleClassique>> newCellules = Cellules;
+    std::vector<std::vector<StandardCellule>> newCellules = Cellules;
 
     for (int x = 0; x < sizeX; ++x) {
         for (int y = 0; y < sizeY; ++y) {
             int voisinsVivants = VoisinVivant(x, y);
-            if (Cellules[x][y].getEtat()) {
+            if (Cellules[x][y].GetState()) {
                 // Cellule vivante : meurt si <2 ou >3 voisins vivants
                 if (voisinsVivants < 2 || voisinsVivants > 3) {
-                    newCellules[x][y].setEtat(false);
+                    newCellules[x][y].ChangeState(0);
                 }
             } else {
                 // Cellule morte : devient vivante si exactement 3 voisins vivants
                 if (voisinsVivants == 3) {
-                    newCellules[x][y].setEtat(true);
+                    newCellules[x][y].ChangeState(1);
                 }
             }
         }
@@ -61,7 +61,7 @@ void GrilleClassique::update() {
 }
 
 // Constructeur de GrilleTorique
-GrilleTorique::GrilleTorique(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
+GrilleTorique::GrilleTorique(int X, int Y, const std::vector<std::vector<StandardCellule>>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 
 // Affichage de GrilleTorique
@@ -69,7 +69,7 @@ void GrilleTorique::afficherGrille() const {
     //std::cout << "Grille Torique de taille " << sizeX << " x " << sizeY << std::endl;
     for (const auto& ligne : Cellules) {
         for (const auto& cellule : ligne) {
-            std::cout << (cellule.getEtat() ? "O " : ". ");
+            std::cout << (cellule.GetState() ? "O " : ". ");
         }
         std::cout << std::endl;
     }
@@ -83,7 +83,7 @@ int GrilleTorique::VoisinVivant(int x, int y) const {
             if (i == 0 && j == 0) continue;
             int nx = (x + i + sizeX) % sizeX;
             int ny = (y + j + sizeY) % sizeY;
-            if (Cellules[nx][ny].getEtat()) {
+            if (Cellules[nx][ny].GetState()) {
                 ++voisinsVivants;
             }
         }
@@ -92,20 +92,20 @@ int GrilleTorique::VoisinVivant(int x, int y) const {
 }
 
 void GrilleTorique::update() {
-    std::vector<std::vector<CelluleClassique>> newCellules = Cellules;
+    std::vector<std::vector<StandardCellule>> newCellules = Cellules;
 
     for (int x = 0; x < sizeX; ++x) {
         for (int y = 0; y < sizeY; ++y) {
             int voisinsVivants = VoisinVivant(x, y);
-            if (Cellules[x][y].getEtat()) {
+            if (Cellules[x][y].GetState()) {
                 // Cellule vivante : meurt si <2 ou >3 voisins vivants
                 if (voisinsVivants < 2 || voisinsVivants > 3) {
-                    newCellules[x][y].setEtat(false);
+                    newCellules[x][y].ChangeState(0);
                 }
             } else {
                 // Cellule morte : devient vivante si exactement 3 voisins vivants
                 if (voisinsVivants == 3) {
-                    newCellules[x][y].setEtat(true);
+                    newCellules[x][y].ChangeState(1);
                 }
             }
         }
@@ -115,7 +115,7 @@ void GrilleTorique::update() {
 }
 
 // Constructeur de Motif
-Motif::Motif(int X, int Y, const std::vector<std::vector<CelluleClassique>>& newCellules)
+Motif::Motif(int X, int Y, const std::vector<std::vector<StandardCellule>>& newCellules)
     : AbstractGrille(X, Y, newCellules) {}
 
 // Affichage de Motif
@@ -123,7 +123,7 @@ void Motif::afficherGrille() const {
     //std::cout << "Motif de taille " << sizeX << " x " << sizeY << std::endl;
     for (const auto& ligne : Cellules) {
         for (const auto& cellule : ligne) {
-            std::cout << (cellule.getEtat() ? "O " : ". ");
+            std::cout << (cellule.GetState() ? "O " : ". ");
         }
         std::cout << std::endl;
     }
@@ -137,7 +137,7 @@ int Motif::VoisinVivant(int x, int y) const {
             if (i == 0 && j == 0) continue;
             int nx = x + i, ny = y + j;
             if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY) {
-                if (Cellules[nx][ny].getEtat()) {
+                if (Cellules[nx][ny].GetState()) {
                     ++voisinsVivants;
                 }
             }
