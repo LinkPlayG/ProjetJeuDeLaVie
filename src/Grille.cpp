@@ -32,11 +32,6 @@ Motif::Motif(int X, int Y, const std::vector<int>& newCellules)
 
 void GrilleClassique::afficherGrille() const {
     // vérifier la taile de la grille
-    if (sizeof(Cellules) != sizeX * sizeY) {
-        std::cerr << "Erreur: la taille de la grille ne correspond pas à la taille spécifiée" << std::endl;
-        return;
-    }
-
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
             std::cout << (getCellState(x, y) ? " 0 " : " * ");
