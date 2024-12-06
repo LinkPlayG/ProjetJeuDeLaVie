@@ -12,6 +12,7 @@ protected:
     std::vector<int> Cellules;      // Grille stockée sous forme de tableau 1D
 
 public:
+
     AbstractGrille(int X, int Y, const std::vector<int>& newCellules);
     virtual void afficherGrille() const = 0;  // Méthode d'affichage virtuelle pure
     virtual ~AbstractGrille() = default;      // Destructeur virtuel

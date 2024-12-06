@@ -29,7 +29,7 @@ Motif::Motif(int X, int Y, const std::vector<int>& newCellules)
 void GrilleClassique::afficherGrille() const {
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
-            std::cout << (getCellState(x, y) ? "O " : ". ");
+            std::cout << (getCellState(x, y) ? " 0 " : " * ");
         }
         std::cout << std::endl;
     }
@@ -72,7 +72,7 @@ void GrilleClassique::update() {
 void GrilleTorique::afficherGrille() const {
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
-            std::cout << (getCellState(x, y) ? "O " : ". ");
+            std::cout << (getCellState(x, y) ? " 0 " : " * ");
         }
         std::cout << std::endl;
     }
@@ -114,7 +114,7 @@ void GrilleTorique::update() {
 void Motif::afficherGrille() const {
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
-            std::cout << (getCellState(x, y) ? "O " : ". ");
+            std::cout << (getCellState(x, y) ? " 0 " : " * ");
         }
         std::cout << std::endl;
     }
