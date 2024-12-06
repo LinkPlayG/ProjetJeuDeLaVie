@@ -13,11 +13,17 @@
 #include "Grille.h"
 
 class Jeu{
-  private:
-    void Save();
-    void Load();
-  public:
-    void Launch();
+    private:
+        const int cellSize = 10;
+        int gridWidth = 5;
+        int gridHeight = 5;
+        const int iterations = 100;
+        GrilleClassique* grille;
+        void Save();
+        void Load();
+    public:
+        Jeu();
+        void Launch();
 };
 
 #endif //JEU_H

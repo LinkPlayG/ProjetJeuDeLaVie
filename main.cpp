@@ -17,7 +17,7 @@ const int gridHeight = 80;
 const int iterations = 100;
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(gridWidth * cellSize, gridHeight * cellSize), "Game of Life");
+    /*sf::RenderWindow window(sf::VideoMode(gridWidth * cellSize, gridHeight * cellSize), "Game of Life");
 
     std::vector<int> cellules;
     std::srand(std::time(0));
@@ -51,5 +51,7 @@ int main() {
         grille.update();
     }
 
-    return 0;
+    return 0;*/
+
+
 }
