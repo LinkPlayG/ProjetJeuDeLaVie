@@ -1,4 +1,4 @@
-#include "Grille.h"
+#include "../hea/Grille.h"
 
 // ----- Méthodes utilitaires -----
 
