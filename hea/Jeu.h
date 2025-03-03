@@ -8,8 +8,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <iomanip>
 
-#include "AbstractCellule.h"
+#include "Cell.h"
 #include "Grille.h"
 
 
@@ -22,16 +23,17 @@ class Jeu{
         const int cellSize = 20;
         int gridWidth = 5;
         int gridHeight = 5;
-        const int iterations = 100;
+        int iterations = 100;
         std::string fname;
-        GrilleClassique* grille;
-        void Save(std::string fileName);
-        void Load(std::string fileName);
-        void IG();
-        void Console();
+        AbstractGrille* grille;
+        int Save(std::string fileName);
+        int Load(std::string fileName);
+        int IG();
+        int Console();
+        int Editor();
     public:
         Jeu();
-        void Launch();
+        int Launch();
 };
 
 #endif //JEU_H

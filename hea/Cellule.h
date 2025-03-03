@@ -1,7 +1,7 @@
 //
 // Created by lucas on 03/12/2024.
 //
-
+/*
 #ifndef CELLULE_H
 #define CELLULE_H
 
@@ -14,9 +14,10 @@ protected:
 public:
     AbstractCellule();
     AbstractCellule(int x, int y, int state);
-    virtual int getX() const;
-    virtual int getY() const;
-    virtual int GetState()const;
+    virtual int getX() const = 0;
+    virtual int getY() const = 0;
+    virtual int GetState()const = 0;
+	virtual void ChangeState(int s) = 0;
 };
 
 class StandardCellule: public AbstractCellule{
@@ -26,7 +27,7 @@ public:
     int getX() const override;
     int getY() const override;
     int GetState() const override;
-    void ChangeState(int s);
+    void ChangeState(int s) override;
 };
 
 class Obstacle:public AbstractCellule{
@@ -39,3 +40,4 @@ public:
 };
 
 #endif //CELLULE_H
+*/

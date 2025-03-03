@@ -13,16 +13,19 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror")
 set(SFML_LIBS "-lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system")
 
 # Locate source and header files
-file(GLOB_RECURSE SOURCES "../src/*.cpp")
-file(GLOB_RECURSE HEADERS "../hea/*.h")
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "../src/*.cpp")
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "../hea/*.h")
 
 # Exclude .ccls-cache directories
 list(FILTER SOURCES EXCLUDE REGEX ".*\\.ccls-cache.*")
 list(FILTER HEADERS EXCLUDE REGEX ".*\\.ccls-cache.*")
 
 # Main executable target
-add_executable(main ${SOURCES} ${HEADERS} ../main.cpp)
-target_link_libraries(main PRIVATE ${SFML_LIBS})
+#add_executable(main ${SOURCES} ${HEADERS} ../main.cpp)
+#target_link_libraries(main PRIVATE ${SFML_LIBS})
 
-add_executable(test ${SOURCES} ${HEADERS} ../tests/test.cpp)
-target_link_libraries(test PRIVATE ${SFML_LIBS})
+#add_executable(test ${SOURCES} ${HEADERS} ../tests/test.cpp)
+#target_link_libraries(test PRIVATE ${SFML_LIBS})
+
+add_executable(TBS ${SOURCES} ${HEADERS} ../tests/troubleshooting.cpp)
+target_link_libraries(TBS PRIVATE ${SFML_LIBS})
