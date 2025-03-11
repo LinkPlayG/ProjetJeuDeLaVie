@@ -6,51 +6,107 @@
 Jeu::Jeu(){
   this->gridHeight = 4;
   this->gridWidth = 4;
-  this->iterations = 10;
+  this->titles = "Numéro_d'itération Largeur Hauteur Type_de_Grille(S:Standard;T:Torique)\n";
 };
 
 int Jeu::Save(std::string fileName){
-    std::string temp;
-    temp="../output";
-    std::ofstream file(temp, std::ios::app);
-    if (!file.is_open()) {
-      std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
-      return 0;
-    }
-    //file<<this->gridWidth<<" "<<this->gridHeight<<std::endl;
-    file<<std::endl;
-    for(int y=0;y<this->gridHeight;y++){
-        for(int x=0;x<this->gridWidth;x++){
-          file<<grille->getCellState(x,y)<<"   ";
+  fileName ="Outputs/" + fileName + "_out.txt";
+
+    if (fs::exists(fileName) && fs::file_size(fileName)!=0) {
+        // File exists and not empty, write to it
+
+      	std::ifstream fileIn(fileName , std::ios::in);
+    	std::string existingContent;
+        std::string title,token;
+    	for(int a=0;a<4;a++){
+      		fileIn>>token;
+      		title+=token + " ";
+    	}
+
+        fileIn>>this->iterations;
+        this->iterations += 1;
+
+        std::ostringstream buffer;
+        buffer << fileIn.rdbuf();  // Read entire file into buffer
+        existingContent = buffer.str();
+
+
+    	fileIn.close();
+    	std::ofstream fileOut(fileName, std::ios::trunc); // Overwrite file
+    	if (fileOut) {
+          	fileOut << this->titles;
+        	fileOut<<this->iterations<<" "<<this->gridWidth<<" "<<this->gridHeight<<" "<<this->gridType;
+    		fileOut<<std::endl;
+    		for(int y=0;y<this->gridHeight;y++){
+        		for(int x=0;x<this->gridWidth;x++){
+          			fileOut<<grille->getCellState(x,y)<<"   ";
+        		}
+        		fileOut<<std::endl;
+            }
+            fileOut<<std::endl;
+            fileOut<<existingContent<<std::endl;
+            fileOut<<std::endl;
+            fileOut.close();
+    	}
+        return 1;
+    }else {
+        // File doesn't exist or empty, create a new file or open the empty one
+        this->iterations = 0;
+        std::ofstream newFile(fileName, std::ios::trunc);
+        if (newFile) {
+            newFile<<this->iterations<<" "<<this->gridWidth<<" "<<this->gridHeight<<std::endl;
+    		newFile<<std::endl;
+    		for(int y=0;y<this->gridHeight;y++){
+        		for(int x=0;x<this->gridWidth;x++){
+          			newFile<<grille->getCellState(x,y)<<"   ";
+        		}
+        		newFile<<std::endl;
+    		}
+    		newFile.close();
+            return 1;
         }
-        file<<std::endl;
     }
-    file.close();
     return 1;
 }
 
 int Jeu::Load(std::string fileName){
-  //std::vector <StandardCellule> v;
-  //void Jeu::Load() {
- 	std::string temp;
-    temp="../"+fileName;
+
+ 	std::string temp = "Inputs/" + fileName + ".txt";
+    std::cout << "> Loading file: " << temp << std::endl;
+    if (fs::exists(temp)) {
+
     std::ifstream fichier(temp, std::ios::in); // Chemin du fichier à charger
-    if (!fichier.is_open()) {
-      std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
-      return 0;
+
+    std::string title,token;
+    for(int a=0;a<4;a++){
+      fichier>>token;
+      title+=token + " ";
     }
 
+    fichier>>this->iterations;
     fichier >> gridWidth >> gridHeight; // Lecture des dimensions de la grille
-    grille=new GrilleClassique(gridWidth, gridHeight);
+
+    std::string gType;
+    fichier>>gridType;
+    if(gType=="S"){
+    	grille=new GrilleClassique(gridWidth, gridHeight);
+    }
+    else if(gType=="T"){
+      	grille=new GrilleTorique(gridWidth, gridHeight);
+    }
+    else{
+      	std::cout<<"> Erreur de Type\n"<<std::endl;
+      	return 0;
+    }
     for (int i = 0; i < gridHeight; ++i) {
       for (int j = 0; j < gridWidth; ++j) {
         int etat;
         fichier >> etat; // Lire l'état de chaque cellule (0 ou 1)
 		if (etat == 0 || etat == 1) {
-            grille->setCellState(j,i,std::make_shared<StandardCellule>(etat));
+            grille->setCustomCellule(j,i,std::make_shared<StandardCellule>(etat));
 		}
         if (etat == 101 || etat == 111) {
-            grille->setCellState(j,i,std::make_shared<Obstacle>(etat));
+            grille->setCustomCellule(j,i,std::make_shared<Obstacle>(etat));
         }
       }
     }
@@ -58,81 +114,108 @@ int Jeu::Load(std::string fileName){
 
     return 1;
 }
+    else{
+    	std::cerr << "# Erreur : Impossible d'ouvrir le fichier. Verifiez l'intégrité des données\n" << std::endl;
+      	return 0;
+    }
+}
 
 
 int Jeu::Launch(){
-    //std::cout<<"Voulez vous utiliser un Motif (fonction non fonctionnelle pour l'instant)\n* Entrez 0 pour utiliser un fichier";
+
     std::string answer;
 
     sf::sleep(sf::milliseconds(500));
 
-	std::cout<<"Voulez vous utiliser une grille aléatoire, un Motif ou un fichier d'entrée ?\n1) Un fichier généré aléatoirement\n2) Un Motif\n3) Un fichier contenant des paramètres d'entrée\n";
+	std::cerr<<"Voulez vous utiliser une grille aléatoire, un Motif ou un fichier d'entrée ?\n1) Un fichier généré aléatoirement\n2) Un fichier contenant des paramètres d'entrée\n99) Entrer en mode édition\n";
     std::cin>>answer;
     if (answer != "99"){
       if (answer == "1") {
-      std::cout<<"Entrez le nombre de lignes et de colonnes de la grille\n";
+      std::cerr<<"Entrez le nombre de lignes et de colonnes de la grille\n";
       std::cin >> gridHeight >> gridWidth;
-      grille=new GrilleClassique(gridWidth, gridHeight);
+      std::cerr << "Entrez le type de la grille : \n1) Standard\n2) Torique\n";
+      std::cin >> answer;
+      if(answer == "1"){
+        grille=new GrilleClassique(gridWidth, gridHeight);
+      }
+      else if (answer == "2"){
+        grille=new GrilleTorique(gridWidth, gridHeight);
+      }
+      else{
+        std::cerr<<"# Type invalide\n";
+        return 1;
+      }
+      std::random_device rd;
+      std::mt19937 gen(rd()); // Mersenne Twister generator
+      std::uniform_int_distribution<int> dist(1, 100); // Range [1, 100]
     	for (int i = 0; i < gridHeight; ++i) {
       		for (int j = 0; j < gridWidth; ++j) {
-                int etat;
-                etat = rand() % 100 + 1; // 0 ou 100
-				if (etat> 0 && etat <= 33) {
+                int etat = dist(gen);
+				if (etat<= 40) {
             		grille->setCustomCellule(i,j,std::make_shared<StandardCellule>(0));
 				}
-        		if (etat > 33 || etat <= 66) {
-          			Obstacle newCellule(1);
+        		else if (etat <= 80) {
             		grille->setCustomCellule(i,j,std::make_shared<StandardCellule>(1));
         		}
-                if (etat> 66 && etat <= 83) {
-                  grille->setCellState(j,i,std::make_shared<Obstacle>(etat));
+                else if (etat <= 90) {
             		grille->setCustomCellule(i,j,std::make_shared<Obstacle>(101));
 				}
-        		if (etat > 83 || etat <= 100) {
-          			Obstacle newCellule(1);
+        		else{
             		grille->setCustomCellule(i,j,std::make_shared<Obstacle>(111));
         		}
             }
       	}
     }
-    else if (answer == "2") {
-      std::cout<<"Work In Progress\n";
-    }
-    else if (answer == "3") {
-      std::cout<<"\rEntrez le nom du fichier d'entrée\n";
-      std::cin>>fname;
-    	if (!Load(fname)){
-    		return 0;
+    	else if (answer == "2") {
+      		std::cerr<<"\rEntrez le nom du fichier d'entrée\n";
+      		std::cin>>fname;
+    		if (!Load(fname)){
+    			return 0;
+    		}
     	}
-    }
-    else if (answer == "3") {
-      std::cout<<"\rEntrez le nom du fichier d'entrée\n";
-      std::cin>>fname;
-    	if (!Load(fname)){
-    		return 0;
-    	}
-    }
     else{
-      std::cout<<"Parametre invalide\n";
-      return 0;
+      	std::cerr<<"# Paramètre invalide\n";
+      	return 0;
     }
-    	std::cout<<"Voulez vous utiliser \n1)La console\n2)L'interface Graphique\n";
+    	std::cerr<<"Voulez vous utiliser \n1) La console\n2) L'interface Graphique\n";
     	std::cin>>answer;
+        sf::sleep(sf::milliseconds(1000));
     	if(stoi(answer)==1){
+          	std::cerr<<"\n? Vous pouvez utiliser Ctrl+C peu importe le mode pour arrêter la simulation.\n";
       		Console();
       		return 1;
     	}
     	else if(stoi(answer)==2){
+          	std::cerr<<"\n? Vous pouvez utiliser Ctrl+C peu importe le mode pour arrêter la simulation.\n";
         	IG();
         	return 1;
     	}
     	else{
-        	std::cout<<"Veuillez Réésayer\n";
+        	std::cerr<<"# Paramètre invalide\n";
         	return 0;
     	}
     	return 1;
     }
     else{
+      std::cerr<<"Entrez le nombre de lignes et de colonnes de la grille\n";
+      std::cin >> gridHeight >> gridWidth;
+      std::cerr << "Entrez le type de la grille : \n1) Standard\n2) Torique\n";
+      std::cin >> answer;
+      if(answer == "1"){
+        gridType="S";
+        grille=new GrilleClassique(gridWidth, gridHeight);
+      }
+      else if (answer == "2"){
+        gridType="T";
+        grille=new GrilleTorique(gridWidth, gridHeight);
+      }
+      else{
+        std::cerr<<"Erreur de Type\n";
+      }
+      std::cerr<<"\n? Vous pouvez utiliser Ctrl+C peu importe le mode pour arrêter la simulation.";
+      std::cerr<<"\n? En mode Editeur vous pouvez cliquer sur les cellules pour changer leur type.\n? Par défaut les cellules sont mortes et suivent un cycle morte->vivante->obstacle morte->obstacle vivante.";
+      std::cerr<<"\n? Appuyez sur la touche Entrée pour quitter le mode Edition en sauvegardant dans le fichier Editor_out.txt ou sur la touche ESC pour quitter sans sauvegarder.\n";
+      sf::sleep(sf::milliseconds(5000));
       Editor();
       return 1;
     }
@@ -143,7 +226,11 @@ int Jeu::IG(){
 
     sf::Event event;
 
-    while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+    while (true) {
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && !(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Keyboard::isKeyPressed(sf::Keyboard::C))){
+        std::cerr<<"> Stopping the simulation\n"<<std::endl;
+        return 1;
+      }
         window.clear();
         sf::RectangleShape cell(sf::Vector2f(cellSize - 1.0f, cellSize - 1.0f));
         for (int x = 0; x < gridWidth; ++x) {
@@ -175,29 +262,25 @@ int Jeu::IG(){
         sf::sleep(sf::milliseconds(500));
 
         grille->update();
-        Save(fname);
+        Save("AutoGen");
 	}
-	std::cout<<"> Stopping the simulation"<<std::endl;
-	return 0;
+	return 1;
 }
 int Jeu::Console(){
-  	std::cout<<"> Starting the simulation\n";
+  	std::cerr<<"> Starting the simulation\n";
     while(!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
       grille->afficherGrille();
       std::cout<<std::endl;
       grille->update();
-      sf::sleep(sf::milliseconds(500));
+      sf::sleep(sf::milliseconds(1000));
       Save(fname);
     }
-    std::cout<<"> Stopping the simulation"<<std::endl;
+    std::cerr<<"> Stopping the simulation\n"<<std::endl;
     return 0;
 }
 
 //WIP
 int Jeu::Editor(){
-  	std::cout<<"Enter the size of your grid : Width Height\n";
-  	std::cin>>gridHeight>>gridWidth;
-    grille=new GrilleClassique(gridWidth, gridHeight);
   	sf::RenderWindow window(sf::VideoMode(gridWidth * cellSize, gridHeight * cellSize), "Game of Life");
 
     sf::Event event;
@@ -208,34 +291,44 @@ int Jeu::Editor(){
     for (int x = 0; x < gridWidth; ++x) {
         for (int y = 0; y < gridHeight; ++y) {
             grille->setCustomCellule(x, y, std::make_shared<StandardCellule>(0));
+            cell.setFillColor(sf::Color(196,0,0)); // green
+            cell.setPosition(x * cellSize, y * cellSize);//v v m r o v b o m n
+            window.draw(cell);
         }
     }
 
 
-    while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+    while (true) {
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Keyboard::isKeyPressed(sf::Keyboard::C))) {
+        std::cerr<<"> Stopping the simulation\n"<<std::endl;
+        return 0;
+      }
+      else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+        Save("Editor");
+        std::cerr<<"> Stopping the simulation\n"<<std::endl;
+        return 0;
+      }
       sf::Vector2i coords = sf::Mouse::getPosition(window);
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         int gridX = coords.x / cellSize;
         int gridY = coords.y / cellSize;
         cell.setPosition(gridX * cellSize, gridY * cellSize);
         if (grille->getCellState(gridX, gridY) == 0) {
-          StandardCellule cellu(1);
           grille->setCustomCellule(gridX, gridY, std::make_shared<StandardCellule>(1));
           cell.setFillColor(sf::Color(0, 212, 58)); // green
           window.draw(cell);
         }
-        if (grille->getCellState(gridX, gridY) == 1) {
+        else if (grille->getCellState(gridX, gridY) == 1) {
           grille->setCustomCellule(gridX, gridY, std::make_shared<Obstacle>(101));
           cell.setFillColor(sf::Color(0, 0, 0)); // black
           window.draw(cell);
         }
-        if (grille->getCellState(gridX, gridY) == 101) {
+        else if (grille->getCellState(gridX, gridY) == 101) {
           grille->setCustomCellule(gridX, gridY, std::make_shared<Obstacle>(111));
           cell.setFillColor(sf::Color(255, 255, 255)); // white
           window.draw(cell);
         }
-        if (grille->getCellState(gridX, gridY) == 111) {
-          StandardCellule cellu(0);
+        else if (grille->getCellState(gridX, gridY) == 111) {
           grille->setCustomCellule(gridX, gridY, std::make_shared<StandardCellule>(0));
           cell.setFillColor(sf::Color(196, 0, 0)); // red
           window.draw(cell);
@@ -245,6 +338,5 @@ int Jeu::Editor(){
       }
         window.display();
 	}
-	std::cout<<"> Stopping the simulation"<<std::endl;
 	return 0;
 }

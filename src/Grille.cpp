@@ -27,7 +27,6 @@ void AbstractGrille::setCellState(int x, int y, std::shared_ptr<AbstractCellule>
 
 void AbstractGrille::setCustomCellule(int x, int y,std::shared_ptr<AbstractCellule> cellule) {
   if (Cellules.find({x, y}) != Cellules.end()) {
-    Cellules.erase({x, y});
   	Cellules[{x, y}] = cellule;
   }
   else{
@@ -58,29 +57,26 @@ GrilleTorique::GrilleTorique(int X, int Y): AbstractGrille(X, Y) {}
 GrilleTorique::GrilleTorique(int X, int Y,std::unordered_map<std::pair<int, int>, std::shared_ptr<AbstractCellule>, Hash> cellules):AbstractGrille(X, Y, cellules) {}
 GrilleTorique::~GrilleTorique() {Cellules.clear();}
 
-Motif::Motif() : AbstractGrille() {}
-Motif::Motif(int X, int Y): AbstractGrille(X, Y) {}
-Motif::~Motif() {Cellules.clear();}
-
 // ----- ************** -----
 
 void GrilleClassique::afficherGrille() const {
     // vérifier la taille de la grille
     for (int y = 0; y < sizeY; ++y) {
+        std::cout << "  ";
         for (int x = 0; x < sizeX; ++x) {
           	if (Cellules.find({x, y}) != Cellules.end()) {
             	if(getCellState(x, y) == 101){
-            	    std::cout << " |*| ";
-           		}
-            	if(getCellState(x, y) == 111){
-                	std::cout << " |0| ";
+            	    std::cout << " ◇ ";
+           		}else if(getCellState(x, y) == 111){
+                	std::cout << " ◆ ";
             	}else{
-                	std::cout << (getCellState(x, y) ? "0" : "*");
+                	std::cout << (getCellState(x, y) ? " ■ " : " □ ");
             	}
             }
             else {
-              	std::cout << "*";
+              	std::cout << " □ ";
             }
+            std::cout << "  ";
         }
         std::cout << std::endl;
     }
@@ -123,14 +119,22 @@ void GrilleClassique::update() {
 }
 
 void GrilleTorique::afficherGrille() const {
-    if (sizeof(Cellules) != sizeX * sizeY) {
-        std::cerr << "Erreur: la taille de la grille ne correspond pas à la taille spécifiée" << std::endl;
-        return;
-    }
-
     for (int y = 0; y < sizeY; ++y) {
+        std::cout << "  ";
         for (int x = 0; x < sizeX; ++x) {
-            std::cout << (getCellState(x, y) ? " 0 " : " * ");
+          	if (Cellules.find({x, y}) != Cellules.end()) {
+            	if(getCellState(x, y) == 101){
+            	    std::cout << " ◇ ";
+           		}else if(getCellState(x, y) == 111){
+                	std::cout << " ◆ ";
+            	}else{
+                	std::cout << (getCellState(x, y) ? " ■ " : " □ ");
+            	}
+            }
+            else {
+              	std::cout << " □ ";
+            }
+            std::cout << "  ";
         }
         std::cout << std::endl;
     }
@@ -169,36 +173,4 @@ void GrilleTorique::update() {
         }
     }
     Cellules = newCellules;
-}
-
-void Motif::afficherGrille() const {
-    if (sizeof(Cellules) != sizeX * sizeY) {
-        std::cerr << "Erreur: la taille de la grille ne correspond pas à la taille spécifiée" << std::endl;
-        return;
-    }
-
-    for (int y = 0; y < sizeY; ++y) {
-        for (int x = 0; x < sizeX; ++x) {
-            std::cout << (getCellState(x, y) ? " 0 " : " * ");
-        }
-        std::cout << std::endl;
-    }
-}
-
-int Motif::VoisinVivant(int x, int y) const {
-    int voisinsVivants = 0;
-    for (int i = -1; i <= 1; ++i) {
-        for (int j = -1; j <= 1; ++j) {
-            if (i == 0 && j == 0) continue;
-            int nx = x + i, ny = y + j;
-            if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY) {
-                voisinsVivants += getCellState(nx, ny);
-            }
-        }
-    }
-    return voisinsVivants;
-}
-
-void Motif::update() {
-    // ne fait rien (motif statique)
 }
