@@ -73,7 +73,6 @@ classDiagram
         + Obstacle()
         + Obstacle(int state)
         + int GetState() const override
-        + void ChangeState(int s) override
     }
 
     AbstractGrille <|-- GrilleClassique
