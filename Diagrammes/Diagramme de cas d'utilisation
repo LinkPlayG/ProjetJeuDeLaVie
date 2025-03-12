@@ -1,3 +1,4 @@
+```mermaid
 graph TD
   subgraph "Utilisateur"
     User["Utilisateur"]
@@ -31,3 +32,4 @@ graph TD
   UC8 --> UC9
   UC7 --> UC10
   UC8 --> UC10
+```
