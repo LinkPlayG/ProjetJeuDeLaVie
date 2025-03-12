@@ -1,6 +1,6 @@
 graph TD
   subgraph "Utilisateur"
-    User["🧑 Utilisateur"]
+    User["Utilisateur"]
   end
 
   subgraph "Jeu de la Vie"
