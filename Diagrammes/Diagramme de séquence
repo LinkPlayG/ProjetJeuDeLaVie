@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant User
     participant main as main()
@@ -60,3 +61,4 @@ sequenceDiagram
 
     User->>Jeu: Quitte la simulation (CTRL+C / Échapp)
     Jeu->>Jeu: Arrête le jeu
+```
