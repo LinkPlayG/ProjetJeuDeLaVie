@@ -77,7 +77,7 @@ classDiagram
 
     AbstractGrille <|-- GrilleClassique
     AbstractGrille <|-- GrilleTorique
-    AbstractGrille --> AbstractCellule : utilise (*)
+    AbstractGrille --* AbstractCellule : utilise (*)
     AbstractCellule <|-- StandardCellule
     AbstractCellule <|-- Obstacle
     Jeu --> AbstractGrille : gère (*)
