@@ -54,7 +54,7 @@ int Jeu::Save(std::string fileName) {
         this->iterations = 0;
         std::ofstream newFile(fileName, std::ios::trunc);
         if (newFile) {
-            newFile << this->iterations << " " << this->gridWidth << " " << this->gridHeight << std::endl;
+            newFile << this->titles << " " << this->iterations << " " << this->gridWidth << " " << this->gridHeight <<this->gridType<<std::endl;
             newFile << std::endl;
             for (int y = 0; y < this->gridHeight; y++) {
                 for (int x = 0; x < this->gridWidth; x++) {
@@ -84,11 +84,10 @@ int Jeu::Load(std::string fileName) {
         fichier >> this->iterations;
         fichier >> gridWidth >> gridHeight; // Lecture des dimensions de la grille
 
-        std::string gType;
         fichier >> gridType;
-        if (gType == "S") {
+        if (gridType == "S") {
             grille = new GrilleClassique(gridWidth, gridHeight);
-        } else if (gType == "T") {
+        } else if (gridType == "T") {
             grille = new GrilleTorique(gridWidth, gridHeight);
         } else {
             std::cout << "> Erreur de Type\n" << std::endl;
