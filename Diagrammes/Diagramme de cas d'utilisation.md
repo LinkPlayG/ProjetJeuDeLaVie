@@ -15,6 +15,13 @@ graph TD
     UC8["Jouer en mode Graphique"]
     UC9["Sauvegarder l'état du jeu"]
     UC10["Quitter la simulation"]
+    
+    subgraph "Mode Édition"
+      UC5a["Sélectionner une cellule"]
+      UC5b["Changer l'état de la cellule"]
+      UC5c["Sauvegarder les modifications"]
+      UC5d["Annuler les modifications"]
+    end
   end
 
   %% Relations entre l'utilisateur et les cas d'utilisation
@@ -25,11 +32,19 @@ graph TD
   UC2 --> UC5
   UC3 --> UC6
   UC4 --> UC6
-  UC5 --> UC6
+  UC5 --> UC5a
+  UC5a --> UC5b
+  UC5b --> UC5a 
+  UC5b --> UC5d
+
+  UC5b --> UC5c
+ 
+  
   UC6 --> UC7
   UC6 --> UC8
   UC7 --> UC9
   UC8 --> UC9
   UC7 --> UC10
   UC8 --> UC10
+
 ```
