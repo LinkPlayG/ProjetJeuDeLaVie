@@ -1,3 +1,5 @@
+
+```mermaid
 ---
 Titre : Dagramme de classe, Jeu de la vie
 ---
@@ -81,3 +83,4 @@ classDiagram
     AbstractCellule <|-- Obstacle
     Jeu --> AbstractGrille : gère (*)
 
+```
