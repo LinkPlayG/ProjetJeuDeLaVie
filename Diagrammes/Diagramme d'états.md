@@ -23,11 +23,11 @@ stateDiagram-v2
     ModeEdition --> GrilleClassique
     ModeEdition --> GrilleTorique
 
-    GrilleClassique --> ChoixMode
-    GrilleTorique --> ChoixMode
+    GrilleClassique --> ChoixAffichage
+    GrilleTorique --> ChoixAffichage
 
-    ChoixMode --> SimulationConsole : Choix "Console"
-    ChoixMode --> SimulationGraphique : Choix "Graphique"
+    ChoixAffichage --> SimulationConsole : Choix "Console"
+    ChoixAffichage --> SimulationGraphique : Choix "Graphique"
 
     SimulationConsole --> MiseAJourGrille : Chaque itération
     MiseAJourGrille --> SimulationConsole : Boucle
