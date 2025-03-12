@@ -15,7 +15,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 HEADERS = $(wildcard $(INC_DIR)/*.h)
 
 # Executables
-BINARIES = main test TBS
+BINARIES = main test
 
 # Default target
 all: $(BINARIES)
@@ -27,10 +27,6 @@ main: $(SRCS) $(HEADERS) ./main.cpp
 # Build test executable
 test: $(SRCS) $(HEADERS) $(TEST_DIR)/test.cpp
 	$(CXX) $(CXXFLAGS) $(SRCS) $(TEST_DIR)/test.cpp -o test $(SFML_LIBS)
-
-# Build TBS executable
-TBS: $(SRCS) $(HEADERS) $(TEST_DIR)/troubleshooting.cpp
-	$(CXX) $(CXXFLAGS) $(SRCS) $(TEST_DIR)/troubleshooting.cpp -o TBS $(SFML_LIBS)
 
 # Clean build files
 clean:

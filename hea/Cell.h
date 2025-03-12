@@ -5,30 +5,40 @@
 #ifndef CELL_H
 #define CELL_H
 
-class AbstractCellule{
+class AbstractCellule {
 protected:
-  int state;
+    int state;
+
 public:
-  AbstractCellule();
-  AbstractCellule(int state);
-  virtual int GetState()const = 0;
-  virtual void ChangeState(int s) = 0;
+    AbstractCellule();
+
+    AbstractCellule(int state);
+
+    virtual int GetState() const = 0;
+
+    virtual void ChangeState(int s) = 0;
 };
 
-class StandardCellule: public AbstractCellule{
+class StandardCellule : public AbstractCellule {
 public:
-  StandardCellule();
-  StandardCellule(int state);
-  int GetState() const override;
-  void ChangeState(int s) override;
+    StandardCellule();
+
+    StandardCellule(int state);
+
+    int GetState() const override;
+
+    void ChangeState(int s) override;
 };
 
-class Obstacle:public AbstractCellule{
+class Obstacle : public AbstractCellule {
 public:
-  Obstacle();
-  Obstacle(int state);
-  int GetState()const override;
-  void ChangeState(int s) override;
+    Obstacle();
+
+    Obstacle(int state);
+
+    int GetState() const override;
+
+    void ChangeState(int s) override;
 };
 
 #endif //CELL_H
