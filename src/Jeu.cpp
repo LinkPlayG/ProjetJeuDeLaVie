@@ -54,7 +54,7 @@ int Jeu::Save(std::string fileName) {
         this->iterations = 0;
         std::ofstream newFile(fileName, std::ios::trunc);
         if (newFile) {
-            newFile << this->titles << " " << this->iterations << " " << this->gridWidth << " " << this->gridHeight <<this->gridType<<std::endl;
+            newFile << this->titles << " " << this->iterations << " " << this->gridWidth << " " << this->gridHeight << " " << this->gridType << std::endl;
             newFile << std::endl;
             for (int y = 0; y < this->gridHeight; y++) {
                 for (int x = 0; x < this->gridWidth; x++) {
@@ -143,11 +143,11 @@ int Jeu::Launch() {
             for (int i = 0; i < gridHeight; ++i) {
                 for (int j = 0; j < gridWidth; ++j) {
                     int etat = dist(gen);
-                    if (etat <= 40) {
-                        grille->setCustomCellule(i, j, std::make_shared<StandardCellule>(0));
-                    } else if (etat <= 80) {
+                    if (etat <= 60) {
                         grille->setCustomCellule(i, j, std::make_shared<StandardCellule>(1));
-                    } else if (etat <= 90) {
+                    } else if (etat <= 80) {
+                        grille->setCustomCellule(i, j, std::make_shared<StandardCellule>(0));
+                    } else if (etat <= 99) {
                         grille->setCustomCellule(i, j, std::make_shared<Obstacle>(101));
                     } else {
                         grille->setCustomCellule(i, j, std::make_shared<Obstacle>(111));

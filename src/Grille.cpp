@@ -11,9 +11,8 @@ int AbstractGrille::getCellState(int x, int y) const {
 }
 
 void AbstractGrille::setCellState(int x, int y, std::shared_ptr<AbstractCellule> cellule) {
-    //std::cout << cellule->GetState() << std::endl;
     if (Cellules.find({x, y}) != Cellules.end()) {
-        if (Cellules[{x, y}]->GetState() != 0) {
+        if (cellule->GetState() != 0) {
             Cellules[{x, y}]->ChangeState(cellule->GetState());
         } else {
             Cellules.erase({x, y});
@@ -24,11 +23,7 @@ void AbstractGrille::setCellState(int x, int y, std::shared_ptr<AbstractCellule>
 }
 
 void AbstractGrille::setCustomCellule(int x, int y, std::shared_ptr<AbstractCellule> cellule) {
-    if (Cellules.find({x, y}) != Cellules.end()) {
-        Cellules[{x, y}] = cellule;
-    } else {
-        Cellules[{x, y}] = cellule;
-    }
+    Cellules[{x, y}] = cellule;
 }
 
 
@@ -106,7 +101,7 @@ int GrilleClassique::VoisinVivant(int x, int y) const {
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
             if (i == 0 && j == 0) continue; // Ignore la cellule centrale
-            int nx = x + i, ny = y + j;
+            int nx = x + j, ny = y + i;
             if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY) {
                 // Vérifie les limites
                 if (getCellState(nx, ny) == 111 || getCellState(nx, ny) == 1) {
@@ -119,24 +114,39 @@ int GrilleClassique::VoisinVivant(int x, int y) const {
 }
 
 void GrilleClassique::update() {
-    std::unordered_map<std::pair<int, int>, std::shared_ptr<AbstractCellule>, Hash> newCells = Cellules;
-    for (int x = 0; x < sizeX; ++x) {
-        for (int y = 0; y < sizeY; ++y) {
+    std::unordered_map<std::pair<int, int>, std::shared_ptr<AbstractCellule>, Hash> newCellules;
+    
+    for (int y = 0; y < sizeY; ++y) {
+        for (int x = 0; x < sizeX; ++x) {
             int voisinsVivants = VoisinVivant(x, y);
-            if (getCellState(x, y) == 1) {
+            int currentState = getCellState(x, y);
+            
+            if (currentState == 1 || currentState == 111) {
+                // Cellule vivante
                 if (voisinsVivants < 2 || voisinsVivants > 3) {
-                    setCellState(x, y, std::make_shared<StandardCellule>(0)); // Meurt
+                    // Meurt par sous-population ou surpopulation
+                    newCellules[{x, y}] = std::make_shared<StandardCellule>(0);
+                } else {
+                    // Survit
+                    newCellules[{x, y}] = std::make_shared<StandardCellule>(currentState);
                 }
-                if (getCellState(x, y) == 0) {
-                }
+            } else if (currentState == 0) {
+                // Cellule morte
                 if (voisinsVivants == 3) {
-                    setCellState(x, y, std::make_shared<StandardCellule>(1)); // Devient vivante
+                    // Naissance
+                    newCellules[{x, y}] = std::make_shared<StandardCellule>(1);
                 }
-                // Exemple de mise à jour de cellule morte
+            } else if (currentState == 101) {
+                // Obstacle - ne change pas
+                newCellules[{x, y}] = Cellules.at({x, y});
             }
         }
     }
-    Cellules = newCells; // Mise à jour de la grille
+    
+    // Mettre à jour la grille
+    for (const auto& pair : newCellules) {
+        setCellState(pair.first.first, pair.first.second, pair.second);
+    }
 }
 
 void GrilleTorique::afficherGrille() const {
@@ -165,9 +175,10 @@ int GrilleTorique::VoisinVivant(int x, int y) const {
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
             if (i == 0 && j == 0) continue;
-            int nx = (x + i + sizeX) % sizeX; // Gestion torique
-            int ny = (y + j + sizeY) % sizeY; // Gestion torique
-            if (getCellState(nx, ny) == 111 || getCellState(nx, ny)) {
+            int nx = (x + j + sizeX) % sizeX; // Gestion torique
+            int ny = (y + i + sizeY) % sizeY; // Gestion torique
+            int state = getCellState(nx, ny);
+            if (state == 111 || state == 1) {
                 voisinsVivants += 1;
             }
         }
@@ -176,21 +187,37 @@ int GrilleTorique::VoisinVivant(int x, int y) const {
 }
 
 void GrilleTorique::update() {
-    std::unordered_map<std::pair<int, int>, std::shared_ptr<AbstractCellule>, Hash> newCellules = Cellules;
-
-    for (int x = 0; x < sizeX; ++x) {
-        for (int y = 0; y < sizeY; ++y) {
+    std::unordered_map<std::pair<int, int>, std::shared_ptr<AbstractCellule>, Hash> newCellules;
+    
+    for (int y = 0; y < sizeY; ++y) {
+        for (int x = 0; x < sizeX; ++x) {
             int voisinsVivants = VoisinVivant(x, y);
-            if (getCellState(x, y) == 1) {
+            int currentState = getCellState(x, y);
+            
+            if (currentState == 1 || currentState == 111) {
+                // Cellule vivante
                 if (voisinsVivants < 2 || voisinsVivants > 3) {
-                    setCellState(x, y, std::make_shared<StandardCellule>(0)); // Meurt
+                    // Meurt par sous-population ou surpopulation
+                    newCellules[{x, y}] = std::make_shared<StandardCellule>(0);
+                } else {
+                    // Survit
+                    newCellules[{x, y}] = std::make_shared<StandardCellule>(currentState);
                 }
+            } else if (currentState == 0) {
+                // Cellule morte
                 if (voisinsVivants == 3) {
-                    setCellState(x, y, std::make_shared<StandardCellule>(1)); // Devient vivante
+                    // Naissance
+                    newCellules[{x, y}] = std::make_shared<StandardCellule>(1);
                 }
-                // Exemple de mise à jour de cellule morte
+            } else if (currentState == 101) {
+                // Obstacle - ne change pas
+                newCellules[{x, y}] = Cellules.at({x, y});
             }
         }
     }
-    Cellules = newCellules;
+    
+    // Mettre à jour la grille
+    for (const auto& pair : newCellules) {
+        setCellState(pair.first.first, pair.first.second, pair.second);
+    }
 }
